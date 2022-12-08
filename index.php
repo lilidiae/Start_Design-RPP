@@ -1,8 +1,7 @@
 <?php
 session_start();
 require_once 'conexao.php';
-$sql = "SELECT * FROM slides ORDER BY id DESC";
-$stmt = $con->prepare($sql);
+
  
 ?> 
 
@@ -54,13 +53,15 @@ $stmt = $con->prepare($sql);
     
 	<header style="height: 8px;">
 	  
-	<?php
-			if (isset($_SESSION['email']) && $_SESSION['email'] == "") {
-				include "menu2/menu2.php";
+		<?php
+			#aqui estava uma confusão, menu1 menu2... use nomes que indiquem o que aquilo faz
+
+			if (isset($_SESSION['email']) && $_SESSION['email'] != "") {
+				include "menus/logado.php";
 			 } else {
-				include "menu1/menu1.php";
+				include "menus/deslogado.php";
 			 }
-               ?>
+		?>
 	  <br> 
 	  <br>
 	</header>
@@ -170,15 +171,29 @@ $stmt = $con->prepare($sql);
 	  <div class="row">
 		<div class="col-lg-4">
 		 <?php
-		 while($rw = $stmt->fetch(\PDO::FETCH_ASSOC)){
-            
-		print  "<img src= '.{$rw[foto]}' class='bd-placeholder-img' width='250' height='140'  role='img' aria-label='Placeholder:140x140' preserveAspectRatio='xMidYMid slice' focusable='false'><title>Placeholder</title><rect width='100%' height='100%' fill='#777'/><text x='50%' y='50%' fill='#777' dy='.3em'></text></img>";
-		print  "<h2 class='fw-normal'>".$rw['titulo']."</h2>";
-		print  "<p>".$rw['descricao']."</p>";
-		print  "<p><a class='btn btn-secondary' href='.{$rw[arquivopdf]}'>Visualizar &raquo;</a></p>";
-		print  "<p><a class='btn btn-secondary' href='.{$rw[arquivo]}'>Baixar &raquo;</a></p>";
-	}	
-		   ?>
+		#Eu trouxe a consulta pra cá, pra ficar menos confuso. Tentar deixar o código que tem o mesmo objetivo junto.
+
+		$sql = "SELECT * FROM slides ORDER BY id DESC";
+		$stmt = $con->prepare($sql);
+		$stmt->execute();#só faltava o execute
+		
+		while($rw = $stmt->fetch(\PDO::FETCH_ASSOC)){
+			#o detalhe aqui é que voce está salvando o caminho relativo no banco
+			#e essa pagina é a principal, está fora de todas as pastas
+			#entao tem que fazer uma gambiarra pra consertar o caminho
+
+			$rw['foto'] = str_replace("..",".",$rw['foto']);
+			$rw['arquivopdf'] = str_replace("..",".",$rw['arquivopdf']);
+			$rw['arquivo'] = str_replace("..",".",$rw['arquivo']);
+
+			print  "<img src='{$rw['foto']}' class='bd-placeholder-img' width='250' height='140'  role='img' aria-label='Placeholder:140x140' preserveAspectRatio='xMidYMid slice' focusable='false' />";
+			print  "<title>Placeholder</title><rect width='100%' height='100%' fill='#777'/><text x='50%' y='50%' fill='#777' dy='.3em'></text>";
+			print  "<h2 class='fw-normal'>{$rw['titulo']}</h2>";
+			print  "<p>{$rw['descricao']}</p>";
+			print  "<p><a class='btn btn-secondary' href='{$rw['arquivopdf']}'>PDF &raquo;</a>";
+			print  "<a class='btn btn-secondary' href='{$rw['arquivo']}'>Power Point &raquo;</a></p>";
+		}	
+		?>
 	</div>
 	   </div>
 		</div>

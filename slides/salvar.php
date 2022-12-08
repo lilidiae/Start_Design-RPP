@@ -42,12 +42,12 @@ if ($_POST['id'] == "") {
 	
 	
 	$dadosNovos = [
-		":id" 		=> $_POST['id'],
-		":titulo" 	=> $_POST['titulo'],
+		":id" 			=> $_POST['id'],
+		":titulo" 		=> $_POST['titulo'],
 		":descricao" 	=> $_POST['descricao'],
-		":foto" 	=> $_POST['foto'],
-		":arquivo" 		=> $_POST['arquivo']
-		":arquivopdf" 		=> $_POST['arquivopdf']
+		":foto" 		=> $_POST['foto'],
+		":arquivo" 		=> $_POST['arquivo'],
+		":arquivopdf" 	=> $_POST['arquivopdf'] #Cuidado com essas modificações
 	];
 	
 	
